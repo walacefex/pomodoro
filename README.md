@@ -13,4 +13,4 @@ Esse projeto é uma SPA feita com React.js e Typescript.
 
 ## Detalhes do projeto
 
-Textos e imagens que descrevam seu projeto, suas conquistas, seus desafios, próximos passos, etc...
+O projeto feito em React, um contador para usar nos metodo pomodoro e todo list
