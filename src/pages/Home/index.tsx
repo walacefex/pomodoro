@@ -1,5 +1,7 @@
 import { Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 
 import {
   CountdownContainer,
@@ -11,10 +13,27 @@ import {
   TaskInput,
 } from './styles'
 
-export function Home() {
-  const { register, handleSubmit, watch } = useForm()
+type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>
 
-  function handleCreateNewCycle(data: any){
+const newCycleValidationSchema = zod.object({
+  task: zod.string().nonempty({ message: 'O nome da tarefa não pode ser vazio' }),
+  minutesAmount: zod
+    .number()
+    .min(5, { message: 'O tempo mínimo é de 5 minutos' })
+    .max(60, { message: 'O tempo máximo é de 60 minutos' }),
+})
+
+export function Home() {
+  const { register, handleSubmit, watch } = useForm<NewCycleFormData>({
+    resolver: zodResolver(newCycleValidationSchema),
+    defaultValues: {
+      task: '',
+      minutesAmount: 0,
+    }
+
+  })
+
+  function handleCreateNewCycle(data: NewCycleFormData ){
     console.log(data)
   }
 
