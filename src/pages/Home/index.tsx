@@ -60,6 +60,7 @@ export function Home() {
       id: String(new Date().getTime()),
       task: data.task,
       minutesAmount: data.minutesAmount,
+      stardDate: new Date(),
     }
 
     setCycles((state) =>[...state, newCycle])
