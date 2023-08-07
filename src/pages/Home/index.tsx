@@ -29,7 +29,7 @@ interface Cycle{
   id: string;
   task: string;
   minutesAmount: number;
-  stardDate: Date;
+  startDate: Date;
 }
 
 export function Home() {
@@ -50,7 +50,7 @@ export function Home() {
   useEffect(() => {
     if(activeCycle){
       setInterval(() => {
-        setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.stardDate),)
+        setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate),)
       }, 1000)
     }
   }, [activeCycle])
@@ -60,7 +60,7 @@ export function Home() {
       id: String(new Date().getTime()),
       task: data.task,
       minutesAmount: data.minutesAmount,
-      stardDate: new Date(),
+      startDate: new Date(),
     }
 
     setCycles((state) =>[...state, newCycle])
