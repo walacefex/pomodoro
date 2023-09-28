@@ -1,9 +1,9 @@
-import { Play } from 'phosphor-react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
-import { useState, useEffect } from 'react'
 import { differenceInSeconds } from 'date-fns'
+import { Play } from 'phosphor-react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as zod from 'zod'
 
 import {
   CountdownContainer,
@@ -25,7 +25,7 @@ const newCycleValidationSchema = zod.object({
     .max(60, { message: 'O tempo máximo é de 60 minutos' }),
 })
 
-interface Cycle{
+interface Cycle {
   id: string;
   task: string;
   minutesAmount: number;
@@ -46,16 +46,24 @@ export function Home() {
   })
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
-  
+
   useEffect(() => {
-    if(activeCycle){
-      setInterval(() => {
-        setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate),)
+    let interval: number;
+    if (activeCycle) {
+      interval = setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate),
+        )
       }, 1000)
     }
+
+    return () => {
+      clearInterval(interval)
+    }
+
   }, [activeCycle])
 
-  function handleCreateNewCycle(data: NewCycleFormData ){
+  function handleCreateNewCycle(data: NewCycleFormData) {
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
       task: data.task,
@@ -63,19 +71,27 @@ export function Home() {
       startDate: new Date(),
     }
 
-    setCycles((state) =>[...state, newCycle])
+    setCycles((state) => [...state, newCycle])
     setActiveCycleId(newCycle.id)
+    setAmountSecondsPassed(0)
     reset();
   }
 
 
-  const totalSeconds = activeCycle? activeCycle.minutesAmount * 60 : 0;
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0;
   const minutesAmount = Math.floor(currentSeconds / 60);
   const secondsAmount = currentSeconds % 60;
 
   const minutes = String(minutesAmount).padStart(2, '0');
   const seconds = String(secondsAmount).padStart(2, '0');
+
+  useEffect(() => {
+    if(activeCycle){
+      document.title = `${minutes}:${seconds} | Pomodoro`
+      return;
+    }
+  }, [minutes, seconds, activeCycle])
 
   const task = watch('task')
   const isSubmitDisabled = !task;
@@ -85,7 +101,7 @@ export function Home() {
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <FormContainer>
           <label htmlFor="task">Vou trabalhar em</label>
-          <TaskInput 
+          <TaskInput
             id="task"
             placeholder='Dê um nome para o seu projeto'
             list='task-suggestions'
@@ -94,20 +110,20 @@ export function Home() {
             {...register('task')}
           />
           <datalist id="task-suggestions">
-            <option value="Projeto 1"/>
+            <option value="Projeto 1" />
           </datalist>
 
           <label htmlFor="minutesAmount">durante</label>
-          <MinutesAmountInput 
-            type="number" 
-            id="minutesAmount" 
-            placeholder='00' 
+          <MinutesAmountInput
+            type="number"
+            id="minutesAmount"
+            placeholder='00'
             step={5}
             min={5}
             max={60}
             aria-label='durante'
             aria-placeholder='00'
-            {...register('minutesAmount', {valueAsNumber: true})}
+            {...register('minutesAmount', { valueAsNumber: true })}
           />
 
           <span>minutos.</span>
