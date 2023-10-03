@@ -55,7 +55,6 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
     )
   }
 
-  
   function createNewCycle(data: CreateCycleData) {
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
